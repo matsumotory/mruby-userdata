@@ -13,8 +13,8 @@
 #include "mruby/hash.h"
 #include "mruby/string.h"
 
-#define MRB_USERDATA_KEY_STORE    "$mrb_userdata_key_store"
-#define MRB_USERDATA_DEFAULT_KEY  "$mrb_userdata_default_key"
+#define MRB_USERDATA_KEY_STORE    "mrb_userdata_key_store"
+#define MRB_USERDATA_DEFAULT_KEY  "mrb_userdata_default_key"
 
 #define DONE mrb_gc_arena_restore(mrb, 0);
 #if 1
