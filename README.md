@@ -1,5 +1,5 @@
 # Userdata class for mruby
-When shared mrb_state, you can share userdata objects between one Ruby code and another.
+When shared mrb_state, you can share userdata objects between one Ruby code and the other.
 
 ## install by mrbgems
  - add conf.gem line to `build_config.rb`
