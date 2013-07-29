@@ -21,7 +21,7 @@ end
     ```
 
 
- - another ruby code B is shared mrb_state of ruby code A
+ - The other ruby code B is shared mrb_state with ruby code A
 
     ```ruby
     u = Userdata.new
