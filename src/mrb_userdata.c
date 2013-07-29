@@ -13,7 +13,8 @@
 #include "mruby/hash.h"
 #include "mruby/string.h"
 
-#define GLOBAL_userdata_KEY       "$mrb_g_userdata"
+#define MRB_USERDATA_KEY_STORE    "$mrb_userdata_key_store"
+#define MRB_USERDATA_DEFAULT_KEY  "$mrb_userdata_default_key"
 
 #define DONE mrb_gc_arena_restore(mrb, 0);
 #if 1
@@ -35,20 +36,25 @@
 
 static mrb_value mrb_userdata_init(mrb_state *mrb, mrb_value self)
 {
-  mrb_value userdata;
+  mrb_value userdata, userdata_key;
 
-  userdata = mrb_gv_get(mrb, mrb_intern(mrb, GLOBAL_userdata_KEY));
+  if (mrb_get_args(mrb, "|S", &userdata_key) == 0) {
+    userdata_key = mrb_str_new_cstr(mrb, MRB_USERDATA_DEFAULT_KEY);
+  }
+  userdata = mrb_gv_get(mrb, mrb_intern(mrb, mrb_str_to_cstr(mrb, userdata_key)));
   if (mrb_nil_p(userdata)) {
     userdata = mrb_hash_new(mrb);  
   }
-  mrb_gv_set(mrb, mrb_intern(mrb, GLOBAL_userdata_KEY), userdata);
+  mrb_iv_set(mrb, self, mrb_intern(mrb, MRB_USERDATA_KEY_STORE), userdata_key);
+  mrb_gv_set(mrb, mrb_intern(mrb, mrb_str_to_cstr(mrb, userdata_key)), userdata);
 
   return userdata;
 }
 
 static mrb_value mrb_userdata_get(mrb_state *mrb, mrb_value self, mrb_value key)
 {
-  mrb_value userdata = mrb_gv_get(mrb, mrb_intern(mrb, GLOBAL_userdata_KEY));
+  mrb_value userdata_key = mrb_iv_get(mrb, self, mrb_intern(mrb, MRB_USERDATA_KEY_STORE));
+  mrb_value userdata = mrb_gv_get(mrb, mrb_intern(mrb, mrb_str_to_cstr(mrb, userdata_key)));
 
   if (mrb_nil_p(userdata)) {
     userdata = mrb_hash_new(mrb);
@@ -58,15 +64,14 @@ static mrb_value mrb_userdata_get(mrb_state *mrb, mrb_value self, mrb_value key)
 
 static mrb_value mrb_userdata_set(mrb_state *mrb, mrb_value self, mrb_value key, mrb_value val)
 {
-  mrb_value userdata = mrb_gv_get(mrb, mrb_intern(mrb, GLOBAL_userdata_KEY));
+  mrb_value userdata_key = mrb_iv_get(mrb, self, mrb_intern(mrb, MRB_USERDATA_KEY_STORE));
+  mrb_value userdata = mrb_gv_get(mrb, mrb_intern(mrb, mrb_str_to_cstr(mrb, userdata_key)));
 
-  //printf("%s %s\n", mrb_str_to_cstr(mrb, key), mrb_str_to_cstr(mrb, val));
-  userdata = mrb_gv_get(mrb, mrb_intern(mrb, GLOBAL_userdata_KEY));
   if (mrb_nil_p(userdata)) {
     userdata = mrb_hash_new(mrb);  
   }
   mrb_hash_set(mrb, userdata, key, val);
-  mrb_gv_set(mrb, mrb_intern(mrb, GLOBAL_userdata_KEY), userdata);
+  mrb_gv_set(mrb, mrb_intern(mrb, mrb_str_to_cstr(mrb, userdata_key)), userdata);
 
   return key;
 }
@@ -86,7 +91,6 @@ static mrb_value mrb_userdata_method_missing(mrb_state *mrb, mrb_value self)
   len = strlen(c_name); 
 
   if (c_name[len-1] == '=') {
-    //printf("%s %c %s\n", c_name, c_name[len-1], mrb_str_to_cstr(mrb, a[0]));
     return mrb_userdata_set(mrb, self, mrb_str_new(mrb, c_name, len-1), a[0]);
   } else {
     return mrb_userdata_get(mrb, self, s_name);
@@ -96,9 +100,6 @@ static mrb_value mrb_userdata_method_missing(mrb_state *mrb, mrb_value self)
 void mrb_mruby_userdata_gem_init(mrb_state *mrb)
 {
   struct RClass *userdata;
-
-  //mrb_define_method(mrb, mrb->kernel_module, "new_userdata",     mrb_userdata_init,       MRB_ARGS_REQ(1));
-  //DONE;
 
   userdata = mrb_define_class(mrb, "Userdata", mrb->object_class);
   mrb_define_method(mrb, userdata, "initialize", mrb_userdata_init, ARGS_NONE());
