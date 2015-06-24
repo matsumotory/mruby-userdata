@@ -102,8 +102,8 @@ void mrb_mruby_userdata_gem_init(mrb_state *mrb)
   struct RClass *userdata;
 
   userdata = mrb_define_class(mrb, "Userdata", mrb->object_class);
-  mrb_define_method(mrb, userdata, "initialize", mrb_userdata_init, ARGS_NONE());
-  mrb_define_method(mrb, userdata, "method_missing", mrb_userdata_method_missing, ARGS_ANY());
+  mrb_define_method(mrb, userdata, "initialize", mrb_userdata_init, MRB_ARGS_NONE());
+  mrb_define_method(mrb, userdata, "method_missing", mrb_userdata_method_missing, MRB_ARGS_ANY());
   DONE;
 
 }
