@@ -41,20 +41,20 @@ static mrb_value mrb_userdata_init(mrb_state *mrb, mrb_value self)
   if (mrb_get_args(mrb, "|S", &userdata_key) == 0) {
     userdata_key = mrb_str_new_cstr(mrb, MRB_USERDATA_DEFAULT_KEY);
   }
-  userdata = mrb_gv_get(mrb, mrb_intern(mrb, mrb_str_to_cstr(mrb, userdata_key)));
+  userdata = mrb_gv_get(mrb, mrb_intern_cstr(mrb, mrb_str_to_cstr(mrb, userdata_key)));
   if (mrb_nil_p(userdata)) {
     userdata = mrb_hash_new(mrb);  
   }
-  mrb_iv_set(mrb, self, mrb_intern(mrb, MRB_USERDATA_KEY_STORE), userdata_key);
-  mrb_gv_set(mrb, mrb_intern(mrb, mrb_str_to_cstr(mrb, userdata_key)), userdata);
+  mrb_iv_set(mrb, self, mrb_intern_cstr(mrb, MRB_USERDATA_KEY_STORE), userdata_key);
+  mrb_gv_set(mrb, mrb_intern_cstr(mrb, mrb_str_to_cstr(mrb, userdata_key)), userdata);
 
   return userdata;
 }
 
 static mrb_value mrb_userdata_get(mrb_state *mrb, mrb_value self, mrb_value key)
 {
-  mrb_value userdata_key = mrb_iv_get(mrb, self, mrb_intern(mrb, MRB_USERDATA_KEY_STORE));
-  mrb_value userdata = mrb_gv_get(mrb, mrb_intern(mrb, mrb_str_to_cstr(mrb, userdata_key)));
+  mrb_value userdata_key = mrb_iv_get(mrb, self, mrb_intern_cstr(mrb, MRB_USERDATA_KEY_STORE));
+  mrb_value userdata = mrb_gv_get(mrb, mrb_intern_cstr(mrb, mrb_str_to_cstr(mrb, userdata_key)));
 
   if (mrb_nil_p(userdata)) {
     userdata = mrb_hash_new(mrb);
@@ -64,14 +64,14 @@ static mrb_value mrb_userdata_get(mrb_state *mrb, mrb_value self, mrb_value key)
 
 static mrb_value mrb_userdata_set(mrb_state *mrb, mrb_value self, mrb_value key, mrb_value val)
 {
-  mrb_value userdata_key = mrb_iv_get(mrb, self, mrb_intern(mrb, MRB_USERDATA_KEY_STORE));
-  mrb_value userdata = mrb_gv_get(mrb, mrb_intern(mrb, mrb_str_to_cstr(mrb, userdata_key)));
+  mrb_value userdata_key = mrb_iv_get(mrb, self, mrb_intern_cstr(mrb, MRB_USERDATA_KEY_STORE));
+  mrb_value userdata = mrb_gv_get(mrb, mrb_intern_cstr(mrb, mrb_str_to_cstr(mrb, userdata_key)));
 
   if (mrb_nil_p(userdata)) {
     userdata = mrb_hash_new(mrb);  
   }
   mrb_hash_set(mrb, userdata, key, val);
-  mrb_gv_set(mrb, mrb_intern(mrb, mrb_str_to_cstr(mrb, userdata_key)), userdata);
+  mrb_gv_set(mrb, mrb_intern_cstr(mrb, mrb_str_to_cstr(mrb, userdata_key)), userdata);
 
   return key;
 }
