@@ -86,7 +86,7 @@ static mrb_value mrb_userdata_method_missing(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "n*", &name, &a, &alen);
 
-  s_name = mrb_sym2str(mrb, name);
+  s_name = mrb_sym_str(mrb, name);
   c_name = mrb_str_to_cstr(mrb, s_name);
   len = strlen(c_name); 
 
