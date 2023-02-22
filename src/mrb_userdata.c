@@ -78,15 +78,15 @@ static mrb_value mrb_userdata_set(mrb_state *mrb, mrb_value self, mrb_value key,
 
 static mrb_value mrb_userdata_method_missing(mrb_state *mrb, mrb_value self)
 {
-  mrb_value name, *a;
-  mrb_value s_name;
+  mrb_sym name;
+  mrb_value *a, s_name;
   char *c_name;
   int alen;
   size_t len;
 
   mrb_get_args(mrb, "n*", &name, &a, &alen);
 
-  s_name = mrb_sym2str(mrb, mrb_symbol(name));
+  s_name = mrb_sym2str(mrb, name);
   c_name = mrb_str_to_cstr(mrb, s_name);
   len = strlen(c_name); 
 
