@@ -81,7 +81,7 @@ static mrb_value mrb_userdata_method_missing(mrb_state *mrb, mrb_value self)
   mrb_sym name;
   mrb_value *a, s_name;
   char *c_name;
-  int alen;
+  mrb_int alen;
   size_t len;
 
   mrb_get_args(mrb, "n*", &name, &a, &alen);
